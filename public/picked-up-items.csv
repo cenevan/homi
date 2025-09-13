@@ -1,0 +1,2 @@
+id,item_name,original_owner,picked_up_by,category,priority,date_picked_up,receipt_id,receipt_image,store_name,cost,notes
+1,Greek Yogurt,Alex,Jordan,Dairy,high,2024-01-25,1,receipt_jan25_grocery.jpg,Target,4.99,"Picked up during grocery run"
