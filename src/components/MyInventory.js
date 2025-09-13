@@ -9,6 +9,7 @@ import {
   deleteShoppingListItem
 } from '../utils/dataOperations';
 import Modal from './Modal';
+import logo from '../logos/logo.png';
 import './MyInventory.css';
 
 function MyInventory() {
@@ -213,9 +214,12 @@ function MyInventory() {
     <div className="my-inventory-container">
       <header className="my-inventory-header">
         <div className="header-content">
-          <div>
-            <h1>{userName}'s Inventory</h1>
-            <p>Manage your shared items and shopping list</p>
+          <div className="header-brand">
+            <img src={logo} alt="Homi" className="header-logo" />
+            <div>
+              <h1>{userName}'s Inventory</h1>
+              <p>Manage your shared items and shopping list</p>
+            </div>
           </div>
           <button onClick={() => navigate('/inventory')} className="back-button">
             ← Back to Shared Inventory
