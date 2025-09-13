@@ -45,6 +45,33 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 
 To learn React, check out the [React documentation](https://reactjs.org/).
 
+## Backend API + PostgreSQL
+
+This repo now includes a Node/Express API backed by PostgreSQL to replace CSV-powered data.
+
+Quick start (Docker):
+
+1. Start PostgreSQL: `docker compose up -d`
+2. Configure server env: copy `server/.env.example` to `server/.env` (defaults work with Docker).
+3. Install server deps and run migrations/seeds:
+   - `cd server`
+   - `npm install`
+   - `npm run db:setup`
+   - `npm run db:seed`
+4. Start API: `npm run dev` (listens on `http://localhost:5000`).
+5. In another terminal, start the React app: `npm start` (proxy is configured).
+
+Endpoints:
+
+- `GET /api/inventory` — list inventory items
+- `POST /api/inventory` — create item `{ item_name, owner, category, tag?, description? }`
+- `DELETE /api/inventory/:id` — delete by id
+- `GET /api/shopping-list` — list shopping items
+- `POST /api/shopping-list` — create item `{ item_name, owner, category, priority?, notes? }`
+- `DELETE /api/shopping-list/:id` — delete by id
+
+Schema is defined in `server/db/schema.sql`. Seeding imports from `public/inventory.csv` and `public/shopping-list.csv`.
+
 ### Code Splitting
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)

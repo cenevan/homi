@@ -1,24 +1,9 @@
-import Papa from 'papaparse';
-
-// Data operations that can be easily replaced with database calls later
-
-// Inventory Operations
+// Inventory Operations (now via API)
 export const loadInventoryData = async () => {
   try {
-    const response = await fetch('/inventory.csv');
-    const csvText = await response.text();
-
-    const result = Papa.parse(csvText, {
-      header: true,
-      skipEmptyLines: true,
-      transformHeader: (header) => header.trim()
-    });
-
-    if (result.errors.length > 0) {
-      console.error('CSV parsing errors:', result.errors);
-    }
-
-    return result.data;
+    const response = await fetch('/api/inventory');
+    if (!response.ok) throw new Error('Failed to load inventory');
+    return await response.json();
   } catch (error) {
     console.error('Error loading inventory data:', error);
     return [];
@@ -34,16 +19,10 @@ const updateInventoryFile = async (csvData) => {
 
 export const deleteInventoryItem = async (itemId) => {
   try {
-    // Step 1: Load current inventory data (database SELECT in future)
-    const items = await loadInventoryData();
-    const itemToDelete = items.find(item => item.id === itemId);
-    const updatedItems = items.filter(item => item.id !== itemId);
-
-    // Step 2: Update CSV file (database DELETE operation in future)
-    const csv = Papa.unparse(updatedItems);
-    await updateInventoryFile(csv);
-
-    return { success: true, data: updatedItems, deletedItem: itemToDelete };
+    const response = await fetch(`/api/inventory/${itemId}`, { method: 'DELETE' });
+    if (!response.ok) throw new Error('Failed to delete item');
+    const data = await response.json();
+    return { success: true, deletedItem: data.deleted };
   } catch (error) {
     console.error('Error deleting item:', error);
     return { success: false, error: error.message };
@@ -52,25 +31,14 @@ export const deleteInventoryItem = async (itemId) => {
 
 export const addInventoryItem = async (item) => {
   try {
-    // Step 1: Load current inventory data (database SELECT in future)
-    const items = await loadInventoryData();
-
-    // Step 2: Create new item (database INSERT in future)
-    const maxId = Math.max(...items.map(i => parseInt(i.id) || 0));
-    const newItem = {
-      ...item,
-      id: (maxId + 1).toString(),
-      status: 'available',
-      date_added: new Date().toISOString().split('T')[0]
-    };
-
-    const updatedItems = [...items, newItem];
-
-    // Step 3: Update CSV file (database INSERT operation in future)
-    const csv = Papa.unparse(updatedItems);
-    await updateInventoryFile(csv);
-
-    return { success: true, data: updatedItems, newItem };
+    const response = await fetch('/api/inventory', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(item)
+    });
+    if (!response.ok) throw new Error('Failed to add item');
+    const newItem = await response.json();
+    return { success: true, newItem };
   } catch (error) {
     console.error('Error adding item:', error);
     return { success: false, error: error.message };
@@ -80,20 +48,9 @@ export const addInventoryItem = async (item) => {
 // Shopping List Operations
 export const loadShoppingListData = async () => {
   try {
-    const response = await fetch('/shopping-list.csv');
-    const csvText = await response.text();
-
-    const result = Papa.parse(csvText, {
-      header: true,
-      skipEmptyLines: true,
-      transformHeader: (header) => header.trim()
-    });
-
-    if (result.errors.length > 0) {
-      console.error('CSV parsing errors:', result.errors);
-    }
-
-    return result.data;
+    const response = await fetch('/api/shopping-list');
+    if (!response.ok) throw new Error('Failed to load shopping list');
+    return await response.json();
   } catch (error) {
     console.error('Error loading shopping list data:', error);
     return [];
@@ -102,27 +59,14 @@ export const loadShoppingListData = async () => {
 
 export const addShoppingListItem = async (item) => {
   try {
-    // In the future, this will be a database INSERT operation
-    const items = await loadShoppingListData();
-
-    // Generate new ID
-    const maxId = Math.max(...items.map(i => parseInt(i.id) || 0), 0);
-    const newItem = {
-      ...item,
-      id: (maxId + 1).toString(),
-      date_added: new Date().toISOString().split('T')[0],
-      status: 'needed'
-    };
-
-    const updatedItems = [...items, newItem];
-
-    // Convert back to CSV format
-    const csv = Papa.unparse(updatedItems);
-
-    console.log('Shopping item added (simulated):', newItem);
-    console.log('Updated shopping list CSV data:', csv);
-
-    return { success: true, data: updatedItems, newItem };
+    const response = await fetch('/api/shopping-list', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(item)
+    });
+    if (!response.ok) throw new Error('Failed to add shopping item');
+    const newItem = await response.json();
+    return { success: true, newItem };
   } catch (error) {
     console.error('Error adding shopping item:', error);
     return { success: false, error: error.message };
@@ -131,23 +75,14 @@ export const addShoppingListItem = async (item) => {
 
 export const deleteShoppingListItem = async (itemId) => {
   try {
-    // In the future, this will be a database DELETE operation
-    const items = await loadShoppingListData();
-    const updatedItems = items.filter(item => item.id !== itemId);
-
-    // Convert back to CSV format
-    const csv = Papa.unparse(updatedItems);
-
-    console.log('Shopping item deleted (simulated):', itemId);
-    console.log('Updated shopping list CSV data:', csv);
-
-    return { success: true, data: updatedItems };
+    const response = await fetch(`/api/shopping-list/${itemId}`, { method: 'DELETE' });
+    if (!response.ok) throw new Error('Failed to delete shopping item');
+    return { success: true };
   } catch (error) {
     console.error('Error deleting shopping item:', error);
     return { success: false, error: error.message };
   }
 };
-
 // Receipt Management Operations
 export const loadReceiptsData = async () => {
   try {
