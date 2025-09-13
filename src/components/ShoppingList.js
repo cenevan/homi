@@ -128,21 +128,24 @@ function ShoppingList() {
     if (!itemToPickUp) return;
 
     let receiptData = null;
+    let actualCost = null;
 
     if (receiptOption === 'existing' && selectedReceiptId) {
       // Use existing receipt
       const selectedReceipt = savedReceipts.find(r => r.id === selectedReceiptId);
       if (selectedReceipt) {
+        actualCost = receiptCost || selectedReceipt.total_cost;
         receiptData = {
           receiptId: selectedReceipt.id,
           fileName: selectedReceipt.file_name,
-          cost: receiptCost || selectedReceipt.total_cost,
+          cost: actualCost,
           notes: receiptNotes || `Picked up for ${itemToPickUp.owner}`,
           storeName: selectedReceipt.store_name
         };
       }
     } else if (receiptOption === 'new' && receiptFile) {
       // Upload new receipt first
+      actualCost = receiptCost;
       const newReceiptData = {
         name: receiptName || `Receipt - ${new Date().toLocaleDateString()}`,
         fileName: receiptFile.name,
@@ -173,11 +176,55 @@ function ShoppingList() {
     if (result.success) {
       setAllShoppingItems(result.updatedShoppingList);
       setPickedUpItems(result.data);
+
+      // If a receipt with cost was provided, create a split bill
+      if (receiptData && actualCost && parseFloat(actualCost) > 0) {
+        addToSplitBills({
+          itemName: itemToPickUp.item_name,
+          payer: userName,
+          originalOwner: itemToPickUp.owner,
+          cost: parseFloat(actualCost),
+          storeName: receiptData.storeName || 'Unknown Store',
+          notes: receiptData.notes,
+          type: 'shopping_pickup'
+        });
+      }
+
       setShowPickUpModal(false);
       setItemToPickUp(null);
     } else {
       alert('Error marking item as picked up: ' + result.error);
     }
+  };
+
+  // Function to add shopping pickup to split bills
+  const addToSplitBills = (pickupData) => {
+    // Get existing split bills data from localStorage
+    const existingBills = JSON.parse(localStorage.getItem('splitBills') || '[]');
+
+    const newBill = {
+      id: Date.now(),
+      name: `Shopping Pickup: ${pickupData.itemName}`,
+      payer: pickupData.payer,
+      totalAmount: pickupData.cost.toString(),
+      splitType: 'even',
+      participants: [pickupData.originalOwner],
+      items: [],
+      percentages: {},
+      calculations: {
+        [pickupData.originalOwner]: pickupData.cost
+      },
+      createdAt: new Date().toISOString(),
+      source: 'shopping_pickup',
+      sourceData: {
+        itemName: pickupData.itemName,
+        storeName: pickupData.storeName,
+        notes: pickupData.notes
+      }
+    };
+
+    const updatedBills = [...existingBills, newBill];
+    localStorage.setItem('splitBills', JSON.stringify(updatedBills));
   };
 
   const handleMarkAsPaid = async (itemId) => {

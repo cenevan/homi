@@ -46,6 +46,10 @@ function SplitBills() {
       }
     };
 
+    // Load existing bills from localStorage
+    const savedBills = JSON.parse(localStorage.getItem('splitBills') || '[]');
+    setBills(savedBills);
+
     fetchUsers();
   }, [userName, navigate]);
 
@@ -145,7 +149,9 @@ function SplitBills() {
 
   const deleteBill = (billId) => {
     if (window.confirm('Are you sure you want to delete this bill? This will remove all associated debts.')) {
-      setBills(prev => prev.filter(bill => bill.id !== billId));
+      const updatedBills = bills.filter(bill => bill.id !== billId);
+      setBills(updatedBills);
+      localStorage.setItem('splitBills', JSON.stringify(updatedBills));
     }
   };
 
@@ -178,10 +184,13 @@ function SplitBills() {
       ...currentBill,
       id: Date.now(),
       calculations,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      source: 'manual'
     };
 
-    setBills(prev => [...prev, newBill]);
+    const updatedBills = [...bills, newBill];
+    setBills(updatedBills);
+    localStorage.setItem('splitBills', JSON.stringify(updatedBills));
     closeModal();
   };
 
@@ -243,6 +252,12 @@ function SplitBills() {
     setPayments(prev => [...prev, newPayment]);
     setCurrentPayment({ from: '', to: '', amount: '', description: '' });
     setShowPaymentModal(false);
+  };
+
+  const deletePayment = (paymentId) => {
+    if (window.confirm('Are you sure you want to delete this payment? This will affect the Bills Overview.')) {
+      setPayments(prev => prev.filter(payment => payment.id !== paymentId));
+    }
   };
 
   const overview = getBillOverview();
@@ -342,6 +357,15 @@ function SplitBills() {
                   <p className="payment-amount">${payment.amount}</p>
                   <p className="payment-description">{payment.description}</p>
                   <p className="payment-date">{new Date(payment.createdAt).toLocaleDateString()}</p>
+                  <div className="payment-actions">
+                    <button
+                      onClick={() => deletePayment(payment.id)}
+                      className="delete-payment-btn"
+                      title="Delete this payment"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -355,11 +379,24 @@ function SplitBills() {
           ) : (
             <div className="bills-grid">
               {bills.map(bill => (
-                <div key={bill.id} className="bill-card">
+                <div key={bill.id} className={`bill-card ${bill.source === 'shopping_pickup' ? 'shopping-pickup-card' : ''}`}>
                   <h3>{bill.name}</h3>
+                  {bill.source === 'shopping_pickup' && (
+                    <span className="bill-source-badge">From Shopping Pickup</span>
+                  )}
                   <p><strong>Paid by:</strong> {bill.payer}</p>
                   <p><strong>Split type:</strong> {bill.splitType}</p>
                   <p><strong>Date:</strong> {new Date(bill.createdAt).toLocaleDateString()}</p>
+                  {bill.sourceData && (
+                    <div className="source-details">
+                      {bill.sourceData.storeName && (
+                        <p><strong>Store:</strong> {bill.sourceData.storeName}</p>
+                      )}
+                      {bill.sourceData.notes && (
+                        <p><strong>Notes:</strong> {bill.sourceData.notes}</p>
+                      )}
+                    </div>
+                  )}
                   <div className="bill-details">
                     <h4>Split breakdown:</h4>
                     {Object.entries(bill.calculations).map(([person, amount]) => (
