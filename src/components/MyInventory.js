@@ -230,9 +230,17 @@ function MyInventory() {
               <p>Manage your shared items and shopping list</p>
             </div>
           </div>
-          <button onClick={() => navigate('/inventory')} className="back-button">
-            ← Back to Shared Inventory
-          </button>
+          <div className="header-buttons">
+            <button onClick={() => navigate('/split-bills')} className="nav-button">
+              Split Bills
+            </button>
+            <button onClick={() => navigate('/shopping-list')} className="nav-button">
+              Shopping Lists
+            </button>
+            <button onClick={() => navigate('/inventory')} className="nav-button">
+              ← Back to Inventory
+            </button>
+          </div>
         </div>
       </header>
 

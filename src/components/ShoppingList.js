@@ -236,6 +236,9 @@ function ShoppingList() {
             <button onClick={() => navigate('/my-inventory')} className="nav-button">
               My Inventory
             </button>
+            <button onClick={() => navigate('/split-bills')} className="nav-button">
+              Split Bills
+            </button>
             <button onClick={() => navigate('/inventory')} className="nav-button">
               Shared Inventory
             </button>

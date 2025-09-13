@@ -109,6 +109,9 @@ function Inventory() {
             <button onClick={() => navigate('/shopping-list')} className="shopping-list-button">
               Shopping Lists
             </button>
+            <button onClick={() => navigate('/split-bills')} className="split-bills-button">
+              Split Bills
+            </button>
             <button onClick={() => navigate('/my-inventory')} className="my-inventory-button">
               My Inventory
             </button>

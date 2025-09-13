@@ -4,6 +4,7 @@ import Login from './components/Login';
 import Inventory from './components/Inventory';
 import MyInventory from './components/MyInventory';
 import ShoppingList from './components/ShoppingList';
+import SplitBills from './components/SplitBills';
 import './App.css';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/my-inventory" element={<MyInventory />} />
           <Route path="/shopping-list" element={<ShoppingList />} />
+          <Route path="/split-bills" element={<SplitBills />} />
         </Routes>
       </div>
     </Router>
