@@ -225,6 +225,9 @@ function ShoppingList() {
 
     const updatedBills = [...existingBills, newBill];
     localStorage.setItem('splitBills', JSON.stringify(updatedBills));
+
+    // Dispatch custom event to notify SplitBills component
+    window.dispatchEvent(new CustomEvent('splitBillsUpdated'));
   };
 
   const handleMarkAsPaid = async (itemId) => {

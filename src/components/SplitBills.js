@@ -46,11 +46,36 @@ function SplitBills() {
       }
     };
 
+    const loadBills = () => {
+      const savedBills = JSON.parse(localStorage.getItem('splitBills') || '[]');
+      setBills(savedBills);
+    };
+
     // Load existing bills from localStorage
-    const savedBills = JSON.parse(localStorage.getItem('splitBills') || '[]');
-    setBills(savedBills);
+    loadBills();
+
+    // Add event listener for storage changes
+    const handleStorageChange = (e) => {
+      if (e.key === 'splitBills') {
+        loadBills();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Also listen for custom events within the same tab
+    const handleCustomUpdate = () => {
+      loadBills();
+    };
+
+    window.addEventListener('splitBillsUpdated', handleCustomUpdate);
 
     fetchUsers();
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('splitBillsUpdated', handleCustomUpdate);
+    };
   }, [userName, navigate]);
 
   const handleLogout = () => {
