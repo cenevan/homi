@@ -6,22 +6,23 @@
 .split-bills-header {
   background: linear-gradient(135deg, #52C7B8 0%, #5FD1B2 100%);
   color: white;
-  padding: 1rem 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 24px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .header-brand {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 30px;
 }
 
 .header-logo {
@@ -31,10 +32,9 @@
 }
 
 .header-brand h1 {
-  margin: 0;
-  font-size: 1.8rem;
-  font-weight: 600;
-  font-family: 'Madimi One', sans-serif;
+  margin: 0 0 5px 0;
+  font-size: 2rem;
+  font-family: 'Madimi One', cursive;
 }
 
 .header-brand p {
