@@ -1,0 +1,3 @@
+id,receipt_name,file_name,uploaded_by,upload_date,store_name,total_cost,notes
+1,Grocery Run - Jan 25,receipt_jan25_grocery.jpg,Jordan,2024-01-25,Target,47.89,"Weekly grocery shopping"
+2,Quick Stop - Jan 24,receipt_jan24_convenience.jpg,Alex,2024-01-24,7-Eleven,12.45,"Milk and bread run"
