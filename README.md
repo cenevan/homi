@@ -4,6 +4,12 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
+Database Setup:
+
+### `cd server`
+### `docker compose up -d`
+### `npm run dev`
+
 In the project directory, you can run:
 
 ### `npm start`
