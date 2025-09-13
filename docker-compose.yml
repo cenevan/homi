@@ -1,0 +1,19 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: homi
+      POSTGRES_PASSWORD: homi
+      POSTGRES_DB: homi
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U homi"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+volumes:
+  pgdata: {}
