@@ -125,9 +125,38 @@ app.delete('/api/shopping-list/:id', async (req, res) => {
   }
 });
 
+// Receipts endpoints
+app.get('/api/receipts', async (_req, res) => {
+  try {
+    const { rows } = await pool.query(
+      'select id, receipt_name, file_name, uploaded_by, upload_date, store_name, total_cost, notes from receipts order by id asc'
+    );
+    res.json(rows);
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to fetch receipts', details: String(e) });
+  }
+});
+
+app.post('/api/receipts', async (req, res) => {
+  try {
+    const { name, fileName, uploadedBy, storeName, totalCost, notes } = req.body || {};
+    if (!name || !uploadedBy) {
+      return res.status(400).json({ error: 'name and uploadedBy are required' });
+    }
+    const { rows } = await pool.query(
+      `insert into receipts (receipt_name, file_name, uploaded_by, store_name, total_cost, notes)
+       values ($1,$2,$3,$4,$5,$6)
+       returning id, receipt_name, file_name, uploaded_by, upload_date, store_name, total_cost, notes`,
+      [name, fileName || null, uploadedBy, storeName || null, totalCost || null, notes || null]
+    );
+    res.status(201).json(rows[0]);
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to save receipt', details: String(e) });
+  }
+});
+
 const PORT = Number(process.env.PORT || 5000);
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`Homi API listening on http://localhost:${PORT}`);
 });
-

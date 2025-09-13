@@ -88,57 +88,35 @@ export const deleteShoppingListItem = async (itemId) => {
 // Receipt Management Operations
 export const loadReceiptsData = async () => {
   try {
-    const response = await fetch('/receipts.csv');
-    const csvText = await response.text();
-
-    const result = Papa.parse(csvText, {
-      header: true,
-      skipEmptyLines: true,
-      transformHeader: (header) => header.trim()
-    });
-
-    if (result.errors.length > 0) {
-      console.error('CSV parsing errors:', result.errors);
-    }
-
-    return result.data;
+    const response = await fetch('/api/receipts');
+    if (!response.ok) throw new Error('Failed to load receipts');
+    return await response.json();
   } catch (error) {
     console.error('Error loading receipts data:', error);
     return [];
   }
 };
 
-const updateReceiptsFile = async (csvData) => {
-  // TODO: Replace with database INSERT/UPDATE operations
-  console.log('Updating receipts.csv (simulated):', csvData);
-  // In production: await fetch('/api/receipts', { method: 'PUT', body: csvData })
-};
+// No-op: receipts now persist via API
 
 export const saveReceipt = async (receiptData) => {
   try {
-    // Step 1: Load current receipts (database SELECT in future)
-    const receipts = await loadReceiptsData();
-
-    // Step 2: Create new receipt record (database INSERT in future)
-    const maxId = Math.max(...receipts.map(r => parseInt(r.id) || 0), 0);
-    const newReceipt = {
-      id: (maxId + 1).toString(),
-      receipt_name: receiptData.name,
-      file_name: receiptData.fileName,
-      uploaded_by: receiptData.uploadedBy,
-      upload_date: new Date().toISOString().split('T')[0],
-      store_name: receiptData.storeName || '',
-      total_cost: receiptData.totalCost || '',
-      notes: receiptData.notes || ''
-    };
-
-    const updatedReceipts = [...receipts, newReceipt];
-
-    // Step 3: Update CSV file (database INSERT operation in future)
-    const csv = Papa.unparse(updatedReceipts);
-    await updateReceiptsFile(csv);
-
-    return { success: true, data: updatedReceipts, newReceipt };
+    const response = await fetch('/api/receipts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: receiptData.name,
+        fileName: receiptData.fileName,
+        uploadedBy: receiptData.uploadedBy,
+        storeName: receiptData.storeName,
+        totalCost: receiptData.totalCost,
+        notes: receiptData.notes,
+      })
+    });
+    if (!response.ok) throw new Error('Failed to save receipt');
+    const newReceipt = await response.json();
+    const current = await loadReceiptsData();
+    return { success: true, data: [...current, newReceipt], newReceipt };
   } catch (error) {
     console.error('Error saving receipt:', error);
     return { success: false, error: error.message };

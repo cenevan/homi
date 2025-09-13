@@ -112,16 +112,38 @@ async function main() {
   const publicDir = path.join(root, 'public');
   const invPath = path.join(publicDir, 'inventory.csv');
   const shopPath = path.join(publicDir, 'shopping-list.csv');
+  const receiptsPath = path.join(publicDir, 'receipts.csv');
 
   const inv = fs.existsSync(invPath) ? fs.readFileSync(invPath, 'utf8') : '';
   const shop = fs.existsSync(shopPath) ? fs.readFileSync(shopPath, 'utf8') : '';
+  const receiptsCsv = fs.existsSync(receiptsPath) ? fs.readFileSync(receiptsPath, 'utf8') : '';
 
   const invRows = parseCSV(inv);
   const shopRows = parseCSV(shop);
+  const receiptRows = parseCSV(receiptsCsv);
 
   await seedInventory(invRows);
   await seedShopping(shopRows);
-  console.log('Seeded inventory and shopping list data.');
+  if (receiptRows.length) {
+    for (const r of receiptRows) {
+      const values = [
+        r.receipt_name,
+        r.file_name || null,
+        r.uploaded_by,
+        r.upload_date || new Date().toISOString().slice(0, 10),
+        r.store_name || null,
+        r.total_cost || null,
+        r.notes || null,
+      ];
+      await pool.query(
+        `insert into receipts (receipt_name, file_name, uploaded_by, upload_date, store_name, total_cost, notes)
+         values ($1,$2,$3,$4,$5,$6,$7)
+         on conflict do nothing`,
+        values
+      );
+    }
+  }
+  console.log('Seeded inventory, shopping list, and receipts data.');
 }
 
 main()
@@ -132,4 +154,3 @@ main()
   .finally(async () => {
     await pool.end();
   });
-
