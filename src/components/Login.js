@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import fullLogo from '../logos/full_logo.png';
 import './Login.css';
 
 function Login() {
@@ -17,8 +18,10 @@ function Login() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h1 className="app-title">Homi</h1>
-        <p className="app-subtitle">Share What You Already Have</p>
+        <div className="logo-section">
+          <img src={fullLogo} alt="Homi - Healthy homes, sustainable habits" className="app-logo-main" />
+        </div>
+        <p className="app-subtitle">Healthy homes, sustainable habits</p>
 
         <form onSubmit={handleLogin} className="login-form">
           <div className="input-group">

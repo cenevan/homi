@@ -1,13 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Madimi+One&display=swap');
+
 .inventory-container {
   min-height: 100vh;
   background-color: #f8f9fa;
 }
 
 .inventory-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #52C7B8 0%, #5FD1B2 100%);
   color: white;
-  padding: 20px 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 24px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .header-content {
@@ -19,9 +21,22 @@
   align-items: center;
 }
 
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-logo {
+  height: 60px;
+  width: auto;
+  filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.2));
+}
+
 .inventory-header h1 {
   margin: 0 0 5px 0;
   font-size: 2rem;
+  font-family: 'Madimi One', cursive;
 }
 
 .inventory-header p {
@@ -80,7 +95,8 @@
 
 .search-input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #52C7B8;
+  box-shadow: 0 0 0 3px rgba(82, 199, 184, 0.1);
 }
 
 .clear-search {
@@ -134,13 +150,13 @@
 }
 
 .filter-btn:hover {
-  border-color: #667eea;
-  color: #667eea;
+  border-color: #52C7B8;
+  color: #52C7B8;
 }
 
 .filter-btn.active {
-  background: #667eea;
-  border-color: #667eea;
+  background: #52C7B8;
+  border-color: #52C7B8;
   color: white;
 }
 
@@ -222,7 +238,7 @@
 }
 
 .item-owner {
-  color: #667eea;
+  color: #52C7B8;
   font-weight: 500;
 }
 

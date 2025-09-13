@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadInventoryData } from '../utils/dataOperations';
+import logo from '../logos/logo.png';
 import './Inventory.css';
 
 function Inventory() {
@@ -81,9 +82,12 @@ function Inventory() {
     <div className="inventory-container">
       <header className="inventory-header">
         <div className="header-content">
-          <div>
-            <h1>Homi Inventory</h1>
-            <p>Welcome back, {userName}!</p>
+          <div className="header-brand">
+            <img src={logo} alt="Homi" className="header-logo" />
+            <div>
+              <h1>homi inventory</h1>
+              <p>Welcome back, {userName}!</p>
+            </div>
           </div>
           <div className="header-buttons">
             <button onClick={() => navigate('/shopping-list')} className="shopping-list-button">

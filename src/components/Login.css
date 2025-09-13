@@ -3,32 +3,59 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #74E5A0 0%, #5FD1B2 50%, #52C7B8 100%);
   padding: 20px;
 }
 
 .login-card {
-  background: white;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 50px 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   text-align: center;
-  max-width: 400px;
+  max-width: 450px;
   width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.app-title {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #333;
+.logo-section {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.app-logo-main {
+  height: 100px;
+  width: auto;
+  filter: drop-shadow(0 4px 12px rgba(116, 229, 160, 0.3));
+}
+
+.logo-combo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-logo-icon {
+  height: 50px;
+  width: auto;
+  filter: drop-shadow(0 2px 8px rgba(116, 229, 160, 0.2));
+}
+
+.app-logo-text {
+  height: 35px;
+  width: auto;
+  filter: drop-shadow(0 2px 8px rgba(116, 229, 160, 0.2));
 }
 
 .app-subtitle {
   font-size: 1.1rem;
   color: #666;
   margin-bottom: 30px;
-  font-style: italic;
+  font-weight: bold;
 }
 
 .login-form {
@@ -58,25 +85,29 @@
 
 .name-input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #52C7B8;
+  box-shadow: 0 0 0 3px rgba(82, 199, 184, 0.1);
 }
 
 .login-button {
   width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 16px;
+  background: linear-gradient(135deg, #52C7B8 0%, #5FD1B2 100%);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .login-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(82, 199, 184, 0.4);
+  background: linear-gradient(135deg, #4AB5A6 0%, #52C7B8 100%);
 }
 
 .welcome-text p {

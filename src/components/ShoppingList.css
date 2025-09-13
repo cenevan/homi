@@ -4,10 +4,10 @@
 }
 
 .shopping-list-header {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  background: linear-gradient(135deg, #52C7B8 0%, #5FD1B2 100%);
   color: white;
-  padding: 20px 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 24px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .header-content {
@@ -17,6 +17,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-logo {
+  height: 40px;
+  width: auto;
+  filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.2));
 }
 
 .shopping-list-header h1 {
@@ -76,7 +88,7 @@
 
 .search-input:focus {
   outline: none;
-  border-color: #28a745;
+  border-color: #52C7B8;
 }
 
 .clear-search {
@@ -130,13 +142,13 @@
 }
 
 .filter-btn:hover {
-  border-color: #28a745;
-  color: #28a745;
+  border-color: #52C7B8;
+  color: #52C7B8;
 }
 
 .filter-btn.active {
-  background: #28a745;
-  border-color: #28a745;
+  background: #52C7B8;
+  border-color: #52C7B8;
   color: white;
 }
 
@@ -145,7 +157,7 @@
 }
 
 .my-list-section {
-  border: 3px solid #28a745;
+  border: 3px solid #52C7B8;
   border-radius: 12px;
   padding: 25px;
   background: white;
@@ -181,7 +193,7 @@
 }
 
 .manage-button {
-  background: #28a745;
+  background: #52C7B8;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -230,7 +242,7 @@
 }
 
 .my-item {
-  border-left: 4px solid #28a745;
+  border-left: 4px solid #52C7B8;
   background: #f8fff9;
 }
 
@@ -329,16 +341,16 @@
 }
 
 .tab:hover {
-  color: #28a745;
+  color: #52C7B8;
 }
 
 .tab.active {
-  color: #28a745;
-  border-bottom-color: #28a745;
+  color: #52C7B8;
+  border-bottom-color: #52C7B8;
 }
 
 .pick-up-button {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  background: linear-gradient(135deg, #52C7B8 0%, #5FD1B2 100%);
   color: white;
   border: none;
   padding: 8px 12px;
@@ -362,7 +374,7 @@
 }
 
 .picked-up-card {
-  border-left: 4px solid #28a745;
+  border-left: 4px solid #52C7B8;
   background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
 }
 
@@ -374,7 +386,7 @@
 }
 
 .picked-up-by {
-  background-color: #28a745;
+  background-color: #52C7B8;
   color: white;
   padding: 3px 8px;
   border-radius: 4px;
@@ -421,7 +433,7 @@
 }
 
 .file-input:hover {
-  border-color: #28a745;
+  border-color: #52C7B8;
 }
 
 .file-selected {
@@ -456,7 +468,7 @@
 
 .cost-field:focus {
   outline: none;
-  border-color: #28a745;
+  border-color: #52C7B8;
 }
 
 .notes-field {
@@ -471,7 +483,7 @@
 
 .notes-field:focus {
   outline: none;
-  border-color: #28a745;
+  border-color: #52C7B8;
 }
 
 .tab-content {
@@ -528,7 +540,7 @@
   }
 
   .tab.active {
-    border-left-color: #28a745;
+    border-left-color: #52C7B8;
     border-bottom-color: transparent;
   }
 
@@ -588,7 +600,7 @@
 
 .receipt-select:focus {
   outline: none;
-  border-color: #28a745;
+  border-color: #52C7B8;
 }
 
 .receipt-name-input,
@@ -609,14 +621,14 @@
 .receipt-name-field:focus,
 .store-field:focus {
   outline: none;
-  border-color: #28a745;
+  border-color: #52C7B8;
 }
 
 .selected-receipt-preview {
   margin-top: 15px;
   padding: 15px;
   background-color: #f8fff9;
-  border: 2px solid #28a745;
+  border: 2px solid #52C7B8;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -658,7 +670,7 @@
 }
 
 .preview-button {
-  background: #28a745;
+  background: #52C7B8;
   color: white;
   border: none;
   padding: 8px 12px;

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { loadShoppingListData, loadPickedUpItemsData, markItemAsPickedUp, loadReceiptsData, saveReceipt } from '../utils/dataOperations';
 import Modal from './Modal';
 import ReceiptPreview from './ReceiptPreview';
+import logo from '../logos/logo.png';
 import './ShoppingList.css';
 
 function ShoppingList() {
@@ -209,9 +210,12 @@ function ShoppingList() {
     <div className="shopping-list-container">
       <header className="shopping-list-header">
         <div className="header-content">
-          <div>
-            <h1>Shared Shopping Lists</h1>
-            <p>Coordinate shopping trips with your roommates</p>
+          <div className="header-brand">
+            <img src={logo} alt="Homi" className="header-logo" />
+            <div>
+              <h1>Shared Shopping Lists</h1>
+              <p>Coordinate shopping trips with your roommates</p>
+            </div>
           </div>
           <div className="header-buttons">
             <button onClick={() => navigate('/my-inventory')} className="nav-button">
