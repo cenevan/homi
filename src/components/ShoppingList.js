@@ -30,6 +30,7 @@ function ShoppingList() {
   // Receipt preview state
   const [showReceiptPreview, setShowReceiptPreview] = useState(false);
   const [previewReceipt, setPreviewReceipt] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
 
   const navigate = useNavigate();
 
@@ -651,6 +652,14 @@ function ShoppingList() {
               </>
             )}
           </Modal>
+
+          {/* Receipt Image Preview Modal */}
+          {previewImage && (
+            <ReceiptPreview
+              imagePath={previewImage}
+              onClose={() => setPreviewImage(null)}
+            />
+          )}
 
           {/* Receipt Preview Modal */}
           {showReceiptPreview && (
