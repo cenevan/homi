@@ -1,3 +1,5 @@
+import Papa from 'papaparse';
+
 // Inventory Operations (now via API)
 export const loadInventoryData = async () => {
   try {

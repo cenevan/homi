@@ -26,6 +26,9 @@
    - Health: http://localhost:5001/api/health (expect `{ ok: true, db: true }`)
    - Data: http://localhost:5001/api/inventory, http://localhost:5001/api/shopping-list
 
+7. Access PostgreSQL Database from Command Line
+   - `docker compose exec -it db psql -U homi -d homi`
+
 ### Troubleshooting
 
 - API port in use (5000/5001):
