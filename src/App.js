@@ -1,13 +1,19 @@
-import logo from './logo.svg';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './components/Login';
+import Inventory from './components/Inventory';
 import './App.css';
-// create a basic app that displays Hello World
+
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Homi</h1>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/inventory" element={<Inventory />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
