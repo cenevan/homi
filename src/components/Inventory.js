@@ -8,6 +8,7 @@ function Inventory() {
   const [loading, setLoading] = useState(true);
   const [userName] = useState(() => localStorage.getItem('userName'));
   const [filter, setFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,8 +38,6 @@ function Inventory() {
 
   const getTagColor = (tag) => {
     switch (tag) {
-      case 'free-to-use':
-        return 'tag-green';
       case 'free-to-borrow':
         return 'tag-blue';
       case 'free-to-take':
@@ -50,8 +49,6 @@ function Inventory() {
 
   const getTagLabel = (tag) => {
     switch (tag) {
-      case 'free-to-use':
-        return 'Free to Use';
       case 'free-to-borrow':
         return 'Free to Borrow';
       case 'free-to-take':
@@ -62,8 +59,14 @@ function Inventory() {
   };
 
   const filteredItems = items.filter(item => {
-    if (filter === 'all') return true;
-    return item.tag === filter;
+    const matchesFilter = filter === 'all' || item.tag === filter;
+    const matchesSearch = searchTerm === '' ||
+      item.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.owner.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    return matchesFilter && matchesSearch;
   });
 
   if (loading) {
@@ -89,6 +92,26 @@ function Inventory() {
       </header>
 
       <div className="inventory-content">
+        <div className="search-section">
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="Search items, owners, categories..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="clear-search"
+              >
+                ×
+              </button>
+            )}
+          </div>
+        </div>
+
         <div className="filter-section">
           <h3>Filter by type:</h3>
           <div className="filter-buttons">
@@ -97,12 +120,6 @@ function Inventory() {
               className={filter === 'all' ? 'filter-btn active' : 'filter-btn'}
             >
               All Items ({items.length})
-            </button>
-            <button
-              onClick={() => setFilter('free-to-use')}
-              className={filter === 'free-to-use' ? 'filter-btn active' : 'filter-btn'}
-            >
-              Free to Use ({items.filter(i => i.tag === 'free-to-use').length})
             </button>
             <button
               onClick={() => setFilter('free-to-borrow')}
