@@ -11,3 +11,4 @@ id,item_name,owner,category,status,tag,date_added,description
 10,Chili Oil,Jordan,Condiment,available,free-to-borrow,2024-01-16,"Homemade, spicy!"
 11,Maple Syrup,Sam,Sweetener,available,free-to-borrow,2024-01-14,"Real maple syrup"
 12,Vanilla Extract,Taylor,Baking,available,free-to-borrow,2024-01-21,"Pure vanilla"
+13, Chicken Stock,Eric,Cooking,available,free-to-borrow,2024-01-21,"boullian cubes"

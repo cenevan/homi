@@ -1,0 +1,4 @@
+id,item_name,owner,category,priority,date_added,status,notes
+1,Greek Yogurt,Alex,Dairy,high,2024-01-23,needed,"Running low"
+2,Olive Oil,Jordan,Cooking Oil,medium,2024-01-22,needed,"Extra virgin preferred"
+3,Bread,Sam,Bakery,high,2024-01-24,needed,"Whole wheat"

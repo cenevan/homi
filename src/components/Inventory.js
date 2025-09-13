@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loadInventoryData } from '../utils/csvParser';
+import { loadInventoryData } from '../utils/dataOperations';
 import './Inventory.css';
 
 function Inventory() {
@@ -85,9 +85,17 @@ function Inventory() {
             <h1>Homi Inventory</h1>
             <p>Welcome back, {userName}!</p>
           </div>
-          <button onClick={handleLogout} className="logout-button">
-            Logout
-          </button>
+          <div className="header-buttons">
+            <button onClick={() => navigate('/shopping-list')} className="shopping-list-button">
+              Shopping Lists
+            </button>
+            <button onClick={() => navigate('/my-inventory')} className="my-inventory-button">
+              My Inventory
+            </button>
+            <button onClick={handleLogout} className="logout-button">
+              Logout
+            </button>
+          </div>
         </div>
       </header>
 
