@@ -155,6 +155,55 @@ app.post('/api/receipts', async (req, res) => {
   }
 });
 
+// Picked-up items endpoints
+app.get('/api/picked-up-items', async (_req, res) => {
+  try {
+    const { rows } = await pool.query(
+      'select id, item_name, original_owner, picked_up_by, category, priority, date_picked_up, receipt_id, receipt_image, store_name, cost, notes, paid, date_paid from picked_up_items order by id asc'
+    );
+    res.json(rows);
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to fetch picked-up items', details: String(e) });
+  }
+});
+
+app.post('/api/picked-up-items', async (req, res) => {
+  try {
+    const { item_name, original_owner, picked_up_by, category, priority, receipt_id, receipt_image, store_name, cost, notes } = req.body || {};
+    if (!item_name || !original_owner || !picked_up_by || !category || !priority) {
+      return res.status(400).json({ error: 'item_name, original_owner, picked_up_by, category, and priority are required' });
+    }
+    const { rows } = await pool.query(
+      `insert into picked_up_items (item_name, original_owner, picked_up_by, category, priority, date_picked_up, receipt_id, receipt_image, store_name, cost, notes, paid, date_paid)
+       values ($1,$2,$3,$4,$5, current_date, $6,$7,$8,$9,$10, false, null)
+       returning id, item_name, original_owner, picked_up_by, category, priority, date_picked_up, receipt_id, receipt_image, store_name, cost, notes, paid, date_paid`,
+      [item_name, original_owner, picked_up_by, category, priority, receipt_id || null, receipt_image || null, store_name || null, cost || null, notes || null]
+    );
+    res.status(201).json(rows[0]);
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to add picked-up item', details: String(e) });
+  }
+});
+
+app.patch('/api/picked-up-items/:id/mark-paid', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id)) return res.status(400).json({ error: 'Invalid id' });
+
+    const { rows } = await pool.query(
+      `update picked_up_items set paid = true, date_paid = current_date
+       where id = $1
+       returning id, item_name, original_owner, picked_up_by, category, priority, date_picked_up, receipt_id, receipt_image, store_name, cost, notes, paid, date_paid`,
+      [id]
+    );
+
+    if (rows.length === 0) return res.status(404).json({ error: 'Item not found' });
+    res.json(rows[0]);
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to mark item as paid', details: String(e) });
+  }
+});
+
 const PORT = Number(process.env.PORT || 5000);
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console

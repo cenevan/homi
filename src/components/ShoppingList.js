@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loadShoppingListData, loadPickedUpItemsData, markItemAsPickedUp, loadReceiptsData, saveReceipt } from '../utils/dataOperations';
+import { loadShoppingListData, loadPickedUpItemsData, markItemAsPickedUp, markItemAsPaid, loadReceiptsData, saveReceipt } from '../utils/dataOperations';
 import Modal from './Modal';
 import ReceiptPreview from './ReceiptPreview';
 import './ShoppingList.css';
@@ -175,6 +175,20 @@ function ShoppingList() {
       setItemToPickUp(null);
     } else {
       alert('Error marking item as picked up: ' + result.error);
+    }
+  };
+
+  const handleMarkAsPaid = async (itemId) => {
+    const result = await markItemAsPaid(itemId);
+    if (result.success) {
+      // Update the picked-up items list
+      setPickedUpItems(prevItems =>
+        prevItems.map(item =>
+          item.id === itemId ? result.updatedItem : item
+        )
+      );
+    } else {
+      alert('Error marking item as paid: ' + result.error);
     }
   };
 
@@ -410,17 +424,40 @@ function ShoppingList() {
                           {item.cost && (
                             <span className="item-cost">${item.cost}</span>
                           )}
+                          {item.paid && (
+                            <span className="paid-status">✓ Paid</span>
+                          )}
                         </div>
                       </div>
                       <div className="item-details">
-                        <p><strong>Original Owner:</strong> {item.original_owner}</p>
                         <p><strong>Category:</strong> {item.category}</p>
                         <p><strong>Date Picked Up:</strong> {new Date(item.date_picked_up).toLocaleDateString()}</p>
+                        {item.date_paid && (
+                          <p><strong>Date Paid:</strong> {new Date(item.date_paid).toLocaleDateString()}</p>
+                        )}
                         {item.notes && (
                           <p><strong>Notes:</strong> {item.notes}</p>
                         )}
+                        {item.store_name && (
+                          <p><strong>Store:</strong> {item.store_name}</p>
+                        )}
+                      </div>
+                      <div className="item-actions">
                         {item.receipt_image && (
-                          <p><strong>Receipt:</strong> {item.receipt_image}</p>
+                          <button
+                            className="preview-button"
+                            onClick={() => setPreviewImage(`/receipts/${item.receipt_image}`)}
+                          >
+                            View Receipt
+                          </button>
+                        )}
+                        {!item.paid && item.cost && (
+                          <button
+                            className="pay-button"
+                            onClick={() => handleMarkAsPaid(item.id)}
+                          >
+                            Mark as Paid
+                          </button>
                         )}
                       </div>
                     </div>

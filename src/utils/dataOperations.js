@@ -77,8 +77,16 @@ export const addShoppingListItem = async (item) => {
 
 export const deleteShoppingListItem = async (itemId) => {
   try {
+    console.log('Deleting shopping item with ID:', itemId);
     const response = await fetch(`/api/shopping-list/${itemId}`, { method: 'DELETE' });
-    if (!response.ok) throw new Error('Failed to delete shopping item');
+    console.log('Delete response status:', response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Delete failed with response:', errorText);
+      throw new Error(`Failed to delete shopping item: ${errorText}`);
+    }
+
     return { success: true };
   } catch (error) {
     console.error('Error deleting shopping item:', error);
@@ -126,61 +134,67 @@ export const saveReceipt = async (receiptData) => {
 // Picked-up Items Operations
 export const loadPickedUpItemsData = async () => {
   try {
-    const response = await fetch('/picked-up-items.csv');
-    const csvText = await response.text();
-
-    const result = Papa.parse(csvText, {
-      header: true,
-      skipEmptyLines: true,
-      transformHeader: (header) => header.trim()
-    });
-
-    if (result.errors.length > 0) {
-      console.error('CSV parsing errors:', result.errors);
-    }
-
-    return result.data;
+    const response = await fetch('/api/picked-up-items');
+    if (!response.ok) throw new Error('Failed to load picked-up items');
+    return await response.json();
   } catch (error) {
     console.error('Error loading picked-up items data:', error);
     return [];
   }
 };
 
-// Database-ready CSV file update functions (to be replaced with database operations)
-const updateShoppingListFile = async (csvData) => {
-  // TODO: Replace with database UPDATE/DELETE operations
-  // For now, this simulates file writing
-  console.log('Updating shopping-list.csv (simulated):', csvData);
-  // In production: await fetch('/api/shopping-list', { method: 'PUT', body: csvData })
+// Picked-up items API functions
+export const addPickedUpItem = async (item) => {
+  try {
+    const response = await fetch('/api/picked-up-items', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(item)
+    });
+    if (!response.ok) throw new Error('Failed to add picked-up item');
+    const newItem = await response.json();
+    return { success: true, newItem };
+  } catch (error) {
+    console.error('Error adding picked-up item:', error);
+    return { success: false, error: error.message };
+  }
 };
 
-const updatePickedUpItemsFile = async (csvData) => {
-  // TODO: Replace with database INSERT operation
-  // For now, this simulates file writing
-  console.log('Updating picked-up-items.csv (simulated):', csvData);
-  // In production: await fetch('/api/picked-up-items', { method: 'PUT', body: csvData })
+export const markItemAsPaid = async (itemId) => {
+  try {
+    const response = await fetch(`/api/picked-up-items/${itemId}/mark-paid`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    if (!response.ok) throw new Error('Failed to mark item as paid');
+    const updatedItem = await response.json();
+    return { success: true, updatedItem };
+  } catch (error) {
+    console.error('Error marking item as paid:', error);
+    return { success: false, error: error.message };
+  }
 };
 
 export const markItemAsPickedUp = async (shoppingItem, pickedUpBy, receiptData = null) => {
   try {
-    // Step 1: Remove from shopping list (database DELETE operation in future)
+    console.log('Attempting to pick up item:', shoppingItem);
+    console.log('Item ID:', shoppingItem.id);
+
+    // Step 1: Remove from shopping list
     const deleteResult = await deleteShoppingListItem(shoppingItem.id);
+    console.log('Delete result:', deleteResult);
+
     if (!deleteResult.success) {
-      return { success: false, error: 'Failed to remove from shopping list' };
+      return { success: false, error: `Failed to remove from shopping list: ${deleteResult.error}` };
     }
 
-    // Step 2: Create picked-up item record (database INSERT operation in future)
-    const pickedUpItems = await loadPickedUpItemsData();
-    const maxId = Math.max(...pickedUpItems.map(i => parseInt(i.id) || 0), 0);
-
+    // Step 2: Create picked-up item record
     const pickedUpItem = {
-      id: (maxId + 1).toString(),
       item_name: shoppingItem.item_name,
       original_owner: shoppingItem.owner,
       picked_up_by: pickedUpBy,
       category: shoppingItem.category,
       priority: shoppingItem.priority,
-      date_picked_up: new Date().toISOString().split('T')[0],
       receipt_id: receiptData?.receiptId || '',
       receipt_image: receiptData?.fileName || '',
       store_name: receiptData?.storeName || '',
@@ -188,17 +202,20 @@ export const markItemAsPickedUp = async (shoppingItem, pickedUpBy, receiptData =
       notes: receiptData?.notes || `Picked up for ${shoppingItem.owner}`
     };
 
-    const updatedPickedUpItems = [...pickedUpItems, pickedUpItem];
+    // Step 3: Add to picked-up items via API
+    const addResult = await addPickedUpItem(pickedUpItem);
+    if (!addResult.success) {
+      return { success: false, error: 'Failed to add picked-up item' };
+    }
 
-    // Step 3: Persist picked-up items (simulated) and refresh shopping list from API
-    const pickedUpItemsCsv = Papa.unparse(updatedPickedUpItems);
-    await updatePickedUpItemsFile(pickedUpItemsCsv);
+    // Step 4: Refresh data from API
+    const updatedPickedUpItems = await loadPickedUpItemsData();
     const updatedShoppingList = await loadShoppingListData();
 
     return {
       success: true,
       data: updatedPickedUpItems,
-      pickedUpItem,
+      pickedUpItem: addResult.newItem,
       updatedShoppingList
     };
   } catch (error) {
