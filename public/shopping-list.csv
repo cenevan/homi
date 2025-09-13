@@ -1,4 +1,6 @@
 id,item_name,owner,category,priority,date_added,status,notes
 1,Greek Yogurt,Alex,Dairy,high,2024-01-23,needed,"Running low"
-2,Olive Oil,Jordan,Cooking Oil,medium,2024-01-22,needed,"Extra virgin preferred"
-3,Bread,Sam,Bakery,high,2024-01-24,needed,"Whole wheat"
+2,Olive Oil,Jordan,Condiments,medium,2024-01-22,needed,"Extra virgin preferred"
+3,Bread,Sam,Other,high,2024-01-24,needed,"Whole wheat"
+4,Bananas,Riley,Fruits,medium,2024-01-25,needed,"For smoothies"
+5,Ground Beef,Alex,Meat,high,2024-01-26,needed,"1 lb for dinner"

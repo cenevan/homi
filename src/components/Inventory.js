@@ -10,6 +10,7 @@ function Inventory() {
   const [userName] = useState(() => localStorage.getItem('userName'));
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('name');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -59,16 +60,31 @@ function Inventory() {
     }
   };
 
-  const filteredItems = items.filter(item => {
-    const matchesFilter = filter === 'all' || item.tag === filter;
-    const matchesSearch = searchTerm === '' ||
-      item.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.owner.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredAndSortedItems = items
+    .filter(item => {
+      const matchesFilter = filter === 'all' || item.tag === filter;
+      const matchesSearch = searchTerm === '' ||
+        item.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.owner.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()));
 
-    return matchesFilter && matchesSearch;
-  });
+      return matchesFilter && matchesSearch;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return a.item_name.toLowerCase().localeCompare(b.item_name.toLowerCase());
+        case 'date-newest':
+          return new Date(b.date_added) - new Date(a.date_added);
+        case 'date-oldest':
+          return new Date(a.date_added) - new Date(b.date_added);
+        case 'category':
+          return a.category.toLowerCase().localeCompare(b.category.toLowerCase());
+        default:
+          return 0;
+      }
+    });
 
   if (loading) {
     return (
@@ -122,6 +138,20 @@ function Inventory() {
               </button>
             )}
           </div>
+          <div className="sort-section">
+            <label htmlFor="sort-select">Sort by:</label>
+            <select
+              id="sort-select"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="sort-select"
+            >
+              <option value="name">Name (A-Z)</option>
+              <option value="date-newest">Date Added (Newest)</option>
+              <option value="date-oldest">Date Added (Oldest)</option>
+              <option value="category">Category (A-Z)</option>
+            </select>
+          </div>
         </div>
 
         <div className="filter-section">
@@ -149,12 +179,12 @@ function Inventory() {
         </div>
 
         <div className="items-grid">
-          {filteredItems.length === 0 ? (
+          {filteredAndSortedItems.length === 0 ? (
             <div className="no-items">
               {filter === 'all' ? 'No items available' : `No "${getTagLabel(filter)}" items available`}
             </div>
           ) : (
-            filteredItems.map((item) => (
+            filteredAndSortedItems.map((item) => (
               <div key={item.id} className="item-card">
                 <div className="item-header">
                   <h3 className="item-name">{item.item_name}</h3>

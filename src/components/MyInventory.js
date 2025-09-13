@@ -32,6 +32,7 @@ function MyInventory() {
     tag: 'free-to-borrow',
     description: ''
   });
+  const [customCategory, setCustomCategory] = useState('');
 
   const [newShoppingItem, setNewShoppingItem] = useState({
     item_name: '',
@@ -39,6 +40,7 @@ function MyInventory() {
     priority: 'medium',
     notes: ''
   });
+  const [customShoppingCategory, setCustomShoppingCategory] = useState('');
 
   useEffect(() => {
     if (!userName) {
@@ -46,6 +48,7 @@ function MyInventory() {
       return;
     }
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userName, navigate]);
 
   const loadData = async () => {
@@ -127,8 +130,10 @@ function MyInventory() {
 
   const handleAddInventoryItem = async (e) => {
     e.preventDefault();
+    const finalCategory = newItem.category === 'Other' ? customCategory : newItem.category;
     const itemWithOwner = {
       ...newItem,
+      category: finalCategory,
       owner: userName
     };
 
@@ -141,6 +146,7 @@ function MyInventory() {
         tag: 'free-to-borrow',
         description: ''
       });
+      setCustomCategory('');
       setShowAddForm(false);
     } else {
       alert('Error adding item: ' + result.error);
@@ -149,8 +155,10 @@ function MyInventory() {
 
   const handleAddShoppingItem = async (e) => {
     e.preventDefault();
+    const finalCategory = newShoppingItem.category === 'Other' ? customShoppingCategory : newShoppingItem.category;
     const itemWithOwner = {
       ...newShoppingItem,
+      category: finalCategory,
       owner: userName
     };
 
@@ -163,6 +171,7 @@ function MyInventory() {
         priority: 'medium',
         notes: ''
       });
+      setCustomShoppingCategory('');
     } else {
       alert('Error adding shopping item: ' + result.error);
     }
@@ -269,12 +278,36 @@ function MyInventory() {
                   </div>
                   <div className="form-group">
                     <label>Category</label>
-                    <input
-                      type="text"
+                    <select
                       value={newItem.category}
-                      onChange={(e) => setNewItem({...newItem, category: e.target.value})}
+                      onChange={(e) => {
+                        setNewItem({...newItem, category: e.target.value});
+                        if (e.target.value !== 'Other') {
+                          setCustomCategory('');
+                        }
+                      }}
                       required
-                    />
+                    >
+                      <option value="">Select a category</option>
+                      <option value="Condiments">Condiments</option>
+                      <option value="Fruits">Fruits</option>
+                      <option value="Vegetables">Vegetables</option>
+                      <option value="Meat">Meat</option>
+                      <option value="Dairy">Dairy</option>
+                      <option value="Drinks">Drinks</option>
+                      <option value="Spices">Spices</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    {newItem.category === 'Other' && (
+                      <input
+                        type="text"
+                        placeholder="Enter custom category"
+                        value={customCategory}
+                        onChange={(e) => setCustomCategory(e.target.value)}
+                        required
+                        style={{marginTop: '8px'}}
+                      />
+                    )}
                   </div>
                 </div>
                 <div className="form-row">
@@ -358,13 +391,36 @@ function MyInventory() {
                 </div>
                 <div className="form-group">
                   <label>Category</label>
-                  <input
-                    type="text"
+                  <select
                     value={newShoppingItem.category}
-                    onChange={(e) => setNewShoppingItem({...newShoppingItem, category: e.target.value})}
+                    onChange={(e) => {
+                      setNewShoppingItem({...newShoppingItem, category: e.target.value});
+                      if (e.target.value !== 'Other') {
+                        setCustomShoppingCategory('');
+                      }
+                    }}
                     required
-                    placeholder="e.g. Dairy, Produce"
-                  />
+                  >
+                    <option value="">Select a category</option>
+                    <option value="Condiments">Condiments</option>
+                    <option value="Fruits">Fruits</option>
+                    <option value="Vegetables">Vegetables</option>
+                    <option value="Meat">Meat</option>
+                    <option value="Dairy">Dairy</option>
+                    <option value="Drinks">Drinks</option>
+                    <option value="Spices">Spices</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  {newShoppingItem.category === 'Other' && (
+                    <input
+                      type="text"
+                      placeholder="Enter custom category"
+                      value={customShoppingCategory}
+                      onChange={(e) => setCustomShoppingCategory(e.target.value)}
+                      required
+                      style={{marginTop: '8px'}}
+                    />
+                  )}
                 </div>
               </div>
               <div className="form-row">

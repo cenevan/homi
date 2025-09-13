@@ -64,7 +64,7 @@
 
 .input-group {
   margin-bottom: 20px;
-  text-align: left;
+  text-align: center;
 }
 
 .input-group label {
@@ -81,6 +81,7 @@
   border-radius: 8px;
   font-size: 16px;
   transition: border-color 0.3s ease;
+  box-sizing: border-box;
 }
 
 .name-input:focus {
@@ -102,6 +103,7 @@
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  box-sizing: border-box;
 }
 
 .login-button:hover {
