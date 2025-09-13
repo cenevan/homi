@@ -190,20 +190,16 @@ export const markItemAsPickedUp = async (shoppingItem, pickedUpBy, receiptData =
 
     const updatedPickedUpItems = [...pickedUpItems, pickedUpItem];
 
-    // Step 3: Update CSV files (database operations in future)
-    const shoppingListCsv = Papa.unparse(deleteResult.data);
+    // Step 3: Persist picked-up items (simulated) and refresh shopping list from API
     const pickedUpItemsCsv = Papa.unparse(updatedPickedUpItems);
-
-    await Promise.all([
-      updateShoppingListFile(shoppingListCsv),
-      updatePickedUpItemsFile(pickedUpItemsCsv)
-    ]);
+    await updatePickedUpItemsFile(pickedUpItemsCsv);
+    const updatedShoppingList = await loadShoppingListData();
 
     return {
       success: true,
       data: updatedPickedUpItems,
       pickedUpItem,
-      updatedShoppingList: deleteResult.data
+      updatedShoppingList
     };
   } catch (error) {
     console.error('Error marking item as picked up:', error);
