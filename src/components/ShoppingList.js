@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadShoppingListData, loadPickedUpItemsData, markItemAsPickedUp, loadReceiptsData, saveReceipt } from '../utils/dataOperations';
 import Modal from './Modal';
+import ReceiptPreview from './ReceiptPreview';
 import './ShoppingList.css';
 
 function ShoppingList() {
@@ -24,6 +25,10 @@ function ShoppingList() {
   const [receiptStore, setReceiptStore] = useState('');
   const [receiptCost, setReceiptCost] = useState('');
   const [receiptNotes, setReceiptNotes] = useState('');
+
+  // Receipt preview state
+  const [showReceiptPreview, setShowReceiptPreview] = useState(false);
+  const [previewReceipt, setPreviewReceipt] = useState(null);
 
   const navigate = useNavigate();
 
@@ -181,6 +186,15 @@ function ShoppingList() {
       alert('Please select an image or PDF file');
       e.target.value = '';
     }
+  };
+
+  const handlePreviewReceipt = (receipt) => {
+    setPreviewReceipt(receipt);
+    setShowReceiptPreview(true);
+  };
+
+  const getSelectedReceipt = () => {
+    return savedReceipts.find(r => r.id === selectedReceiptId);
   };
 
   if (loading) {
@@ -465,7 +479,7 @@ function ShoppingList() {
                         checked={receiptOption === 'existing'}
                         onChange={(e) => setReceiptOption(e.target.value)}
                       />
-                      Use existing receipt ({savedReceipts.filter(r => r.uploaded_by === userName).length} available)
+                      Use existing receipt ({savedReceipts.length} available)
                     </label>
 
                     <label className="receipt-option">
@@ -489,14 +503,43 @@ function ShoppingList() {
                         className="receipt-select"
                       >
                         <option value="">Choose a receipt...</option>
-                        {savedReceipts
-                          .filter(r => r.uploaded_by === userName)
-                          .map(receipt => (
-                            <option key={receipt.id} value={receipt.id}>
-                              {receipt.receipt_name} - ${receipt.total_cost} ({receipt.store_name})
-                            </option>
-                          ))}
+                        {savedReceipts.map(receipt => (
+                          <option key={receipt.id} value={receipt.id}>
+                            {receipt.receipt_name} - ${receipt.total_cost} ({receipt.store_name}) - by {receipt.uploaded_by}
+                          </option>
+                        ))}
                       </select>
+
+                      {selectedReceiptId && getSelectedReceipt() && (
+                        <div className="selected-receipt-preview">
+                          <div className="receipt-thumbnail-container">
+                            <img
+                              src={`/${getSelectedReceipt().file_name}`}
+                              alt="Receipt thumbnail"
+                              className="receipt-thumbnail"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.nextSibling.style.display = 'block';
+                              }}
+                            />
+                            <div className="receipt-thumbnail-error" style={{display: 'none'}}>
+                              📄
+                            </div>
+                          </div>
+                          <div className="receipt-details">
+                            <p><strong>{getSelectedReceipt().receipt_name}</strong></p>
+                            <p>{getSelectedReceipt().store_name} - ${getSelectedReceipt().total_cost}</p>
+                            <p>{new Date(getSelectedReceipt().upload_date).toLocaleDateString()}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handlePreviewReceipt(getSelectedReceipt())}
+                            className="preview-button"
+                          >
+                            👁 View Full Receipt
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -567,6 +610,17 @@ function ShoppingList() {
               </>
             )}
           </Modal>
+
+          {/* Receipt Preview Modal */}
+          {showReceiptPreview && (
+            <ReceiptPreview
+              receipt={previewReceipt}
+              onClose={() => {
+                setShowReceiptPreview(false);
+                setPreviewReceipt(null);
+              }}
+            />
+          )}
       </div>
     </div>
   );
