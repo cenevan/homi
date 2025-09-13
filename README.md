@@ -1,82 +1,52 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+### Database Setup (Docker)
 
-Database Setup:
+1. Start PostgreSQL
+   - `docker compose up -d`
+   - Default DB: user `homi`, password `homi`, database `homi` (see `docker-compose.yml`).
 
-### `cd server`
-### `docker compose up -d`
-### `npm run dev`
+2. Configure server environment
+   - `cp server/.env.example server/.env`
+   - The API runs on `PORT=5001`. DB host defaults to `127.0.0.1`.
 
-In the project directory, you can run:
+3. Install server dependencies
+   - `cd server && npm install`
 
-### `npm start`
+4. Apply schema and seed from CSVs
+   - `npm run db:setup` (applies `server/db/schema.sql`)
+   - `npm run db:seed` (imports `public/inventory.csv` and `public/shopping-list.csv`)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+5. Run the API and frontend
+   - API: `npm run dev` (http://localhost:5001)
+   - Frontend: in repo root `npm start` (http://localhost:3000)
+   - The CRA proxy forwards `/api/*` to the API.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+6. Verify
+   - Health: http://localhost:5001/api/health (expect `{ ok: true, db: true }`)
+   - Data: http://localhost:5001/api/inventory, http://localhost:5001/api/shopping-list
 
-### `npm test`
+### Troubleshooting
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- API port in use (5000/5001):
+  - We use 5001 for the API to avoid conflicts. If you prefer another port, set `PORT` in `server/.env` and update the root `package.json` `proxy` to match, then restart `npm start`.
 
-### `npm run build`
+- DB port 5432 in use:
+  - Edit `docker-compose.yml` to map another port, e.g. `ports: ["5433:5432"]`.
+  - Set `PGPORT=5433` in `server/.env`.
+  - `docker compose up -d`, then re-run `npm run db:setup` and `npm run db:seed`.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- IPv6 localhost connection refused:
+  - Ensure `PGHOST=127.0.0.1` in `server/.env` (not `localhost`) to avoid IPv6 `::1` resolution.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-## Backend API + PostgreSQL
-
-This repo now includes a Node/Express API backed by PostgreSQL to replace CSV-powered data.
-
-Quick start (Docker):
-
-1. Start PostgreSQL: `docker compose up -d`
-2. Configure server env: copy `server/.env.example` to `server/.env` (defaults work with Docker).
-3. Install server deps and run migrations/seeds:
-   - `cd server`
-   - `npm install`
-   - `npm run db:setup`
-   - `npm run db:seed`
-4. Start API: `npm run dev` (listens on `http://localhost:5000`).
-5. In another terminal, start the React app: `npm start` (proxy is configured).
-
-Endpoints:
+### API Endpoints
 
 - `GET /api/inventory` — list inventory items
-- `POST /api/inventory` — create item `{ item_name, owner, category, tag?, description? }`
+- `POST /api/inventory` — create `{ item_name, owner, category, tag?, description? }`
 - `DELETE /api/inventory/:id` — delete by id
 - `GET /api/shopping-list` — list shopping items
-- `POST /api/shopping-list` — create item `{ item_name, owner, category, priority?, notes? }`
+- `POST /api/shopping-list` — create `{ item_name, owner, category, priority?, notes? }`
 - `DELETE /api/shopping-list/:id` — delete by id
-
-Schema is defined in `server/db/schema.sql`. Seeding imports from `public/inventory.csv` and `public/shopping-list.csv`.
 
 ### Code Splitting
 
